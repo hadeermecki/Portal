@@ -1,0 +1,13 @@
+com\cit\vericash\data\logging\dto\Response.class
+com\cit\vericash\data\logging\dto\Record.class
+com\cit\vericash\data\logging\dto\Response$Status.class
+com\cit\vericash\data\logging\dto\FilterMessage.class
+com\cit\vericash\data\logging\dto\Criteria$Type.class
+com\cit\vericash\data\logging\dto\Message.class
+com\cit\vericash\data\logging\dto\Criteria.class
+com\cit\vericash\data\logging\dto\ResultSet.class
+com\cit\vericash\data\logging\dto\Having.class
+com\cit\vericash\data\logging\dto\PagingLimit.class
+com\cit\vericash\data\logging\dto\Query$Type.class
+com\cit\vericash\data\logging\dto\Criteria$Operator.class
+com\cit\vericash\data\logging\dto\Query.class

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="vericah-data-logging-presist" />
+        <module name="vericash-data-logging-dto" />
+        <module name="vericash-data-logging-model" />
+        <module name="vericash-data-logging-select" />
+        <module name="vericash-data-logging-service" />
+        <module name="vericash-data-query-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="vericah-data-logging-presist" target="1.8" />
+      <module name="vericash-data-logging-dto" target="1.5" />
+      <module name="vericash-data-logging-model" target="1.6" />
+      <module name="vericash-data-logging-select" target="1.8" />
+      <module name="vericash-data-logging-service" target="1.8" />
+      <module name="vericash-data-query-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

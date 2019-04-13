@@ -1,0 +1,13 @@
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\PartyDetail.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\TransactionPartiesPayment.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\TransactionExecutionStep.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\TransactionExecutionSummary.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\EndToEndTimeRequest.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\ExternalMessagingLogging.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\TransactionPartiesKyc.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\SmsLogging.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\ServiceLog.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\CommissionExecutionSummary.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\TransactionExternalAccount.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\common\CommissionExecutionStep.java
+E:\logging-framework\vericash-data-logging-model\src\main\java\com\cit\vericash\data\logging\model\IBaseModel.java

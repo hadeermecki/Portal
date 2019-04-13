@@ -1,0 +1,51 @@
+package com.cit.vericash.common.data.logging.select;
+
+import com.cit.vericash.data.logging.dto.Record;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+@Repository
+@Transactional
+public class AbstractJpaDao<T extends Serializable> implements IGenericDao<Serializable> {
+
+	@PersistenceContext
+	@Autowired
+    private EntityManager entityManager;
+
+	@Override
+	public List<Record> executeNativeQuery(String queryStr) {
+        List<Record> records = new ArrayList<Record>();
+        String[] querryArr = queryStr.split(" ");
+        String[] columns = querryArr[1].split(",");
+        Query query = entityManager.createNativeQuery(queryStr);
+
+        List<?> results = query.getResultList();
+
+        for (int i = 0; i < results.size(); i++) {
+            Record record = new Record();
+
+            if (results.get(i) instanceof Object[]) {
+                Object[] result = (Object[]) results.get(i);
+                for (int j = 0; j < columns.length; j++) {
+                    record.setField(columns[j], result[j]!=null?result[j].toString():"");
+                }
+            } else {
+                Object result = (Object) results.get(i);
+                record.setField(columns[i], result!=null?result.toString():"");
+
+            }
+
+            records.add(record);
+        }
+
+        return records;
+    }
+}

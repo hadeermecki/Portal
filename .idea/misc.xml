@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/vericash-data-logging-dto/pom.xml" />
+        <option value="$PROJECT_DIR$/vericash-data-logging-model/pom.xml" />
+        <option value="$PROJECT_DIR$/vericash-data-logging-presist/pom.xml" />
+        <option value="$PROJECT_DIR$/vericash-data-logging-select/pom.xml" />
+        <option value="$PROJECT_DIR$/vericash-data-logging-service/pom.xml" />
+        <option value="$PROJECT_DIR$/vericash-data-query-service/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+  <component name="SvnBranchConfigurationManager">
+    <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+</project>

@@ -1,0 +1,173 @@
+package com.cit.vericash.common.data.logging.vericashdataqueryservice;
+
+import com.cit.vericash.data.logging.dto.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class QueryService {
+    @Autowired
+    LoggingPresistClient loggingPresistClient;
+
+    @RequestMapping(value = "get_result", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public String  send(@RequestBody FilterMessage filterMessage) {
+            String selectConfiguredQuery = getSelectQuery(filterMessage);
+            String queryResponse =   appendWhereClause(filterMessage, selectConfiguredQuery);
+            return queryResponse ;
+    }
+
+    @RequestMapping(value = "execute_query", method = RequestMethod.POST)
+    public String send(@RequestBody String selectQuery){
+        System.out.println("The select query :" +selectQuery);
+        Query  query = new Query();
+        query.setQueryObject(selectQuery);
+        query.setType(Query.Type.SELECT);
+        Response response = loggingPresistClient.executeQuery(query);
+        System.out.println(response.getResult());
+        return  response.getResult();
+
+    }
+
+    public String getSelectQuery (FilterMessage filterMessage) {
+        Gson gson = new Gson();
+        ArrayList<Criteria> criteriaList = new ArrayList<>();
+        String selectQuery = "SELECT `query` FROM module_query INNER JOIN module on module_query.module = module.id where module.module = '" + filterMessage.getModule() + "' and query_name = '" + filterMessage.getQueryName() + "'";
+        System.out.println(selectQuery);
+        Query query = new Query();
+        query.setQueryObject(selectQuery);
+        query.setType(Query.Type.SELECT);
+        Response response = loggingPresistClient.executeQuery(query);
+        List<Record> records = (ArrayList<Record>) gson.fromJson(response.getResult(), new TypeToken<ArrayList<Record>>() {
+        }.getType());
+        StringBuilder queryBuilder = new StringBuilder();
+        String quer = records.get(0).get("`query`");
+        return quer;
+
+    }
+
+    public String appendWhereClause(FilterMessage filterMessage, String selectConfiguredQuery) {
+        StringBuilder queryBuilder = new StringBuilder();
+        if(!selectConfiguredQuery.contains("where".toLowerCase())){
+            queryBuilder.append(" where 1 ");
+        }
+        ArrayList<Criteria> criteriaList = (ArrayList<Criteria>) filterMessage.getCriteriaList();
+        for (int i = 0; i < criteriaList.size(); i++) {
+            System.out.println(criteriaList.get(i).getOperator());
+            Criteria criteria=criteriaList.get(i);
+            String operator = getOperator(criteria);
+            System.out.println(operator);
+            System.out.println(criteria.getOperator());
+            if(criteria.getOperator() == Criteria.Operator.EXPRESSION){
+
+                queryBuilder.append(" " +
+                        "" +
+                        " and " + criteria.getValue());
+                System.out.println(criteria.getValue());
+                System.out.println(queryBuilder.toString());
+            }else {
+                queryBuilder.append(" and " + criteria.getColumn() + " " + operator);
+                System.out.println(queryBuilder.toString());
+                appendCriteriaValue(queryBuilder, criteria);
+            }
+        }
+
+        StringBuilder queryAppend = new StringBuilder() ;
+        System.out.println(queryBuilder.toString());
+         String appendQuery = selectConfiguredQuery.replace("@Criteria" , queryBuilder.toString());
+
+
+         if(filterMessage.getHaving() != null){
+             StringBuilder havingappend = new StringBuilder();
+             havingappend.append("HAVING 1=1 ");
+             ArrayList<Criteria> havingcrteriaList = (ArrayList<Criteria>) filterMessage.getHaving().getCriteriaList();
+             for(int i =0 ; i< havingcrteriaList.size(); i++){
+                 havingappend.append("and ");
+                 havingappend.append(havingcrteriaList.get(i).getColumn());
+                 String operator = getOperator(havingcrteriaList.get(i));
+                 havingappend.append(operator);
+                 appendCriteriaValue(havingappend , havingcrteriaList.get(i));
+                 System.out.println(havingappend);
+             }
+            String appendHavingquery = appendQuery.replace("@having" , havingappend.toString());
+             queryAppend.append(appendHavingquery);
+
+         }
+         else{
+             String appendHavingquery = appendQuery.replace("@having" , "");
+             queryAppend.append(appendHavingquery);
+         }
+
+         if(filterMessage.getPagingLimit()!= null){
+             queryAppend.append(" limit " + filterMessage.getPagingLimit().getFrom() +"," + filterMessage.getPagingLimit().getTo());
+         }
+
+        Query query = new Query();
+        System.out.println(queryAppend.toString());
+        query.setQueryObject(queryAppend.toString());
+        query.setType(Query.Type.SELECT);
+        Response queryResult = loggingPresistClient.executeQuery(query);
+        System.out.println(queryResult.getResult());
+        return  queryResult.getResult() ;
+
+    }
+
+    private void appendCriteriaValue(StringBuilder queryBuilder, Criteria criteria) {
+        if(criteria.getOperator() == Criteria.Operator.IN){
+            queryBuilder.append(" (" +  criteria.getValue()+ ")");
+        }
+        else  if(criteria.getOperator() == Criteria.Operator.RANGE ) {
+            ArrayList<Object> value = (ArrayList<Object>) criteria.getValue();
+            System.out.println(value.get(0));
+            System.out.println(value.get(1));
+            if (criteria.getType() == Criteria.Type.STRING) {
+                queryBuilder.append(" '" + value.get(0)+ "' and '" + value.get(1) + "'");
+            } else if (criteria.getType() == Criteria.Type.DATE) {
+                queryBuilder.append(" '" + value.get(0) + "' and '" + value.get(1)+ "'");
+            } else if (criteria.getType() == Criteria.Type.NUMBER) {
+                queryBuilder.append( value.get(0) + " and " + value.get(1));
+            }
+        }else {
+            if (criteria.getType() == Criteria.Type.STRING) {
+                queryBuilder.append(" '" + criteria.getValue() + "'");
+            } else if (criteria.getType() == Criteria.Type.DATE) {
+                queryBuilder.append(" '" + criteria.getValue().toString() + "'");
+            } else if (criteria.getType() == Criteria.Type.NUMBER) {
+                queryBuilder.append(criteria.getValue());
+            }
+        }
+    }
+
+    private String getOperator(Criteria criteria) {
+        String operator="";
+        if (criteria.getOperator() == Criteria.Operator.EQUALS) {
+            operator = "= ";
+        } else if (criteria.getOperator() == Criteria.Operator.GREATER_THAN) {
+            operator = "> ";
+        } else if (criteria.getOperator() == Criteria.Operator.LESS_THAN ){
+            operator = "< ";
+        } else if (criteria.getOperator() == Criteria.Operator.RANGE) {
+            operator = "BETWEEN ";
+        } else if (criteria.getOperator() == Criteria.Operator.CONTAINS) {
+            operator = "LIKE " ;
+        } else if(criteria.getOperator() == Criteria.Operator.GREATER_THAN_OR_EQUALS){
+            operator = ">=" ;
+        } else if(criteria.getOperator() == Criteria.Operator.LESS_THAN_OR_EQUALS){
+            operator = "<=";
+        }
+         else if (criteria.getOperator() == Criteria.Operator.IN){
+            operator =  "IN" ;
+        }
+        return operator;
+    }
+
+}
+
